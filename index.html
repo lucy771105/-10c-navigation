@@ -1,0 +1,78 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>10C導航 V6</title>
+<style>*{box-sizing:border-box}body{margin:0;background:#f6f8fb;font-family:-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;color:#17202a}main{max-width:600px;margin:auto;padding:14px}.card{background:#fff;border:1px solid #d9e2ec;border-radius:20px;padding:17px;margin:12px 0}h1{font-size:28px;margin:0 0 8px}p{font-size:17px;color:#596575;line-height:1.5}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.btn,.room{background:#fff;border:2px solid #d6e4f7;border-radius:16px;padding:11px 7px;min-height:88px;font-size:18px;font-weight:900}.room{min-height:58px}.screen{display:none}.active{display:block}.top{display:flex;justify-content:space-between;align-items:center}.pill{border:0;border-radius:99px;background:#e8f2ff;color:#1455b4;padding:10px;font-weight:850}.status{background:#edf5ff;color:#1455b4;padding:11px;border-radius:13px;font-weight:850}.action{width:100%;border:0;border-radius:15px;background:#1769e0;color:#fff;padding:14px;margin-top:9px;font-size:19px;font-weight:900}.secondary{background:#e9eef5;color:#17202a}.ico{display:block;font-size:30px}.step{display:flex;gap:10px;background:#f8fafc;border:1px solid #d9e2ec;border-radius:15px;padding:12px;margin-top:8px;font-size:18px;font-weight:750;line-height:1.5}.num{min-width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#dceaff;color:#1455b4}.tip{background:#fff6dd;border:1px solid #efd39c;border-radius:14px;padding:12px;margin-top:10px;font-size:16px;font-weight:750}.warn{font-size:13px;color:#6b7280}</style></head><body><main>
+<div class="top"><b style="font-size:23px">🏥 10C 病房導航 V6</b><button class="pill" onclick="show('lang')">🌐 <span id="ln">繁體中文</span></button></div>
+<section id="lang" class="screen active"><div class="card"><h1>請選擇語言</h1><p>Choose language · Pilih bahasa · Chọn ngôn ngữ · 言語を選択</p></div><div class="grid2"><button class="btn" onclick="setL('zh')">🇹🇼 繁體中文</button><button class="btn" onclick="setL('tw')">🗣️ 台語</button><button class="btn" onclick="setL('en')">🇺🇸 English</button><button class="btn" onclick="setL('id')">🇮🇩 Bahasa Indonesia</button><button class="btn" onclick="setL('vi')">🇻🇳 Tiếng Việt</button><button class="btn" onclick="setL('ja')">🇯🇵 日本語</button></div></section>
+<section id="rooms" class="screen"><div class="card"><h1 id="rt"></h1><p id="rh"></p></div><div id="rg" class="grid3"></div></section>
+<section id="dest" class="screen"><div class="card"><h1 id="dt"></h1><p id="dh"></p><div id="fr" class="status"></div></div><div id="dg" class="grid2"></div><button class="action secondary" onclick="roomsPage()" id="chg"></button></section>
+<section id="route" class="screen"><div class="card"><h1 id="nt"></h1><p id="ns"></p><div id="steps"></div><div id="tip" class="tip"></div><button class="action" id="sp" onclick="speakIt()"></button><button class="action secondary" id="bk" onclick="show('dest')"></button><button class="action secondary" id="chg2" onclick="roomsPage()"></button><p class="warn">V6 現場測試版：已把你確認的實際轉彎與地標優先寫入；未逐條確認的組合不會自行編造左右轉。</p></div></section>
+<script>
+const R=Array.from({length:24},(_,i)=>String(1051+i)),T={zh:['繁體中文','我現在在哪一間病房？','請選擇病房號碼','您要去哪裡？','選擇目的地','目前位置','更改病房','🔊 唸出導航','← 選其他目的地'],tw:['台語','你這馬佇佗一間病房？','請揀病房號碼','你欲去佗位？','揀目的地','這馬所在','閣揀病房','🔊 唸導航','← 揀別个所在'],en:['English','Which room are you in?','Select your room','Where would you like to go?','Select a destination','Current location','Change room','🔊 Read directions','← Other destination'],id:['Bahasa Indonesia','Anda berada di kamar berapa?','Pilih kamar','Anda ingin pergi ke mana?','Pilih tujuan','Lokasi saat ini','Ganti kamar','🔊 Bacakan petunjuk','← Tujuan lain'],vi:['Tiếng Việt','Bạn đang ở phòng nào?','Chọn số phòng','Bạn muốn đi đâu?','Chọn điểm đến','Vị trí hiện tại','Đổi phòng','🔊 Đọc hướng dẫn','← Điểm đến khác'],ja:['日本語','現在どの病室にいますか？','病室番号を選択','どこへ行きますか？','目的地を選択','現在地','病室を変更','🔊 音声案内','← 別の目的地']};
+const D={pantry:['🍽️','配膳室'],toilet:['🚻','公共廁所'],water:['🚰','飲水機'],trash:['♻️','垃圾／廚餘'],laundry:['👕','洗衣／烘衣'],linen:['🛏️','被服室'],microwave:['🍲','微波爐／量身高體重'],utility:['🧺','污物室'],exit:['🚪','玻璃門出口／甲梯'],station:['👩‍⚕️','護理站']};let l='zh',room='',speech='';
+function show(x){document.querySelectorAll('.screen').forEach(e=>e.classList.remove('active'));document.getElementById(x).classList.add('active');scrollTo(0,0)}function setL(x){l=x;ln.textContent=T[x][0];roomsPage()}function roomsPage(){rt.textContent=T[l][1];rh.textContent=T[l][2];rg.innerHTML=R.map(r=>`<button class="room" onclick="pick('${r}')">${r}</button>`).join('');show('rooms')}function pick(r){room=r;dt.textContent=T[l][3];dh.textContent=T[l][4];fr.textContent=T[l][5]+'：'+r;chg.textContent=T[l][6];dg.innerHTML=Object.entries(D).map(([k,d])=>`<button class="btn" onclick="nav('${k}')"><span class="ico">${d[0]}</span>${d[1]}</button>`).join('');show('dest')}
+function zr(r,k){if(['water','trash','laundry'].includes(k))k='pantry';let g=['1051','1052','1053','1054','1055'];
+if(g.includes(r)&&k==='pantry')return[`從 ${r} 病房出來後左轉。`,`直走到底後右轉，再繼續直走。`,`右手邊第一間就是配膳室。`];
+if(g.includes(r)&&k==='utility')return[`從 ${r} 病房出來後右轉，往玻璃門方向走。`,`看到玻璃門不要出去，在玻璃門前左轉直走。`,`污物室就在正前方，門口左上方有一台螢幕。`];
+if(g.includes(r)&&k==='linen')return[`從 ${r} 病房出來後右轉，往玻璃門方向走。`,`玻璃門前左轉直走，正前方會看到污物室。`,`第一個路口左轉；沿走廊前進會經過治療室，再往前就是被服室。`];
+if(r==='1053'&&k==='toilet')return['從 1053 病房出來，走正前方通道。','第一個路口左轉後直走。','公共廁所在左手邊；繼續走會到 1059 病房。'];
+if(r==='1053'&&k==='linen')return['從 1053 病房出來，走正前方通道。','第一個路口右轉。','左手邊第一間就是被服室。'];
+if(['1056','1057'].includes(r)&&k==='pantry')return[`從 ${r} 病房出來後左轉直走。`,r==='1056'?'左手邊會先經過 1057 病房。':'繼續往前。','第一個路口右手邊第一間就是配膳室。'];
+if(['1056','1057'].includes(r)&&k==='toilet')return[`從 ${r} 病房出來後左轉直走。`,'經過第一個路口後繼續直走，到第二個路口右轉。','右手邊就是公共廁所。'];
+if(['1056','1057'].includes(r)&&['linen','microwave','utility'].includes(k))return[`從 ${r} 病房出來後左轉直走。`,'到第二個路口右轉，右手邊會經過公共廁所。',k==='linen'?'繼續直走並通過下一個路口，左手邊第一間就是被服室。':k==='microwave'?'左手邊經過被服室後是治療室；治療室相對右手邊就是微波爐與量身高體重區。':'左手邊依序經過被服室、治療室，再繼續直走，左手邊就是污物室。'];
+if(r==='1058'&&k==='pantry')return['從 1058 病房出來後右轉。','左手邊第二間就是配膳室。'];
+if(r==='1058'&&k==='exit')return['從 1058 病房出來後右轉。','第一個路口左轉後一直直走。','走到底的玻璃門就是病房出口。'];
+if(r==='1058'&&['toilet','linen','microwave','utility'].includes(k))return['從 1058 病房出來後左轉，左手邊第一間是 1059。','在 1059 相對右手邊的第一個路口右轉。',k==='toilet'?'右手邊馬上就是公共廁所。':k==='linen'?'經過公廁後繼續直走，通過下一個路口，左手邊第一間就是被服室。':k==='microwave'?'左手邊經過被服室後是治療室；相對右手邊就是微波爐與量身高體重區。':'沿同一走廊繼續走，左手邊依序經過被服室、治療室，再往前就是污物室。'];
+if(r==='1059'&&k==='toilet')return['從 1059 病房出來後直走。','右手邊第一間就是公共廁所。'];
+if(r==='1059'&&['linen','microwave','utility'].includes(k))return['從 1059 病房出來後直走，右手邊會先經過公共廁所。',k==='linen'?'經過一個路口後，左手邊第一間就是被服室。':k==='microwave'?'左手邊經過被服室後是治療室；相對右手邊就是微波爐與量身高體重區。':'左手邊依序經過被服室、治療室，繼續直走左手邊就是污物室。'];
+if(r==='1068'&&k==='linen')return['從 1068 病房出來，走正前方通道。','第一個路口左轉後直走。','第一間就是被服室。'];
+if(r==='1068'&&k==='toilet')return['從 1068 病房出來，走正前方通道。','第一個路口右轉後直走。','左手邊就是公共廁所。'];
+if(r==='1070'&&k==='exit')return['從 1070 病房出來後左轉，直走到底。','右轉後直走，左手邊依序經過 1071、1072、1073、1074。','再繼續往前，左手邊玻璃門就是病房出口。'];
+if(r==='1073'&&k==='utility')return['從 1073 病房出來，走正前方通道。','右手邊第一間就是污物室。'];
+return[`從 ${r} 病房出來後，請依公共走道前進。`,'這一組轉彎細節目前尚未逐條現場確認。','如不確定方向，請向護理站人員詢問。']}
+
+function trSteps(s){
+ if(l==='zh')return s;
+ const dict={
+ '從 ':'From ',' 病房出來後':' room, ',' 病房出來，':' room, ',' 病房':' room',
+ '左轉':'turn left','右轉':'turn right','直走':'go straight','繼續直走':'continue straight',
+ '走正前方通道':'take the corridor directly ahead','第一個路口':'the first intersection',
+ '第二個路口':'the second intersection','走到底':'continue to the end',
+ '左手邊':'on your left','右手邊':'on your right','第一間':'the first room','第二間':'the second room',
+ '公共廁所':'the public restroom','配膳室':'the pantry','被服室':'the linen room','治療室':'the treatment room',
+ '污物室':'the utility room','微波爐':'the microwave','量身高體重區':'the height and weight area',
+ '玻璃門':'the glass door','病房出口':'the ward exit','護理站':'the nursing station'
+ };
+ // Natural, route-faithful templates: preserve every confirmed step and room number.
+ const roomName=x=>({en:`room ${x}`,id:`kamar ${x}`,vi:`phòng ${x}`,ja:`${x}号室`,tw:`${x}病房`}[l]);
+ const dirs={
+  en:{from:'From ',leave:', leave the room',left:'turn left',right:'turn right',straight:'go straight',continue:'continue straight',first:'first intersection',second:'second intersection',L:'on your left',R:'on your right',end:'continue to the end',glass:'glass door',dont:'Do not go through the glass door.',ask:'If you are unsure, please ask nursing staff.'},
+  id:{from:'Dari ',leave:', keluar dari kamar',left:'belok kiri',right:'belok kanan',straight:'jalan lurus',continue:'terus jalan lurus',first:'persimpangan pertama',second:'persimpangan kedua',L:'di sebelah kiri',R:'di sebelah kanan',end:'jalan sampai ujung',glass:'pintu kaca',dont:'Jangan keluar melalui pintu kaca.',ask:'Jika ragu, silakan bertanya kepada perawat.'},
+  vi:{from:'Từ ',leave:', ra khỏi phòng',left:'rẽ trái',right:'rẽ phải',straight:'đi thẳng',continue:'tiếp tục đi thẳng',first:'ngã rẽ đầu tiên',second:'ngã rẽ thứ hai',L:'bên trái',R:'bên phải',end:'đi đến cuối hành lang',glass:'cửa kính',dont:'Không đi ra ngoài qua cửa kính.',ask:'Nếu không chắc đường, vui lòng hỏi điều dưỡng.'},
+  ja:{from:'',leave:'を出て',left:'左折します',right:'右折します',straight:'まっすぐ進みます',continue:'そのまま直進します',first:'最初の曲がり角',second:'2つ目の曲がり角',L:'左手',R:'右手',end:'突き当たりまで進みます',glass:'ガラス扉',dont:'ガラス扉から外へ出ないでください。',ask:'道順が不明な場合は看護スタッフにお尋ねください。'},
+  tw:{from:'對 ',leave:'病房出來了後',left:'倒手爿轉',right:'正手爿轉',straight:'直直行',continue:'閣繼續直直行',first:'頭一个路口',second:'第二个路口',L:'倒手爿',R:'正手爿',end:'直直行到路尾',glass:'玻璃門',dont:'毋通對玻璃門行出去。',ask:'若無確定方向，請問護理人員。'}
+ }[l];
+ function one(z){
+   let q=z;
+   q=q.replace(/從 (\d{4}) 病房出來後/g,dirs.from+roomName('$1')+dirs.leave)
+      .replace(/從 (\d{4}) 病房出來/g,dirs.from+roomName('$1')+dirs.leave)
+      .replace(/從 (\d{4}) 病房出來，/g,dirs.from+roomName('$1')+dirs.leave+'，')
+      .replace(/(\d{4}) 病房/g,(m,n)=>roomName(n))
+      .replace(/左轉/g,dirs.left).replace(/右轉/g,dirs.right)
+      .replace(/繼續直走/g,dirs.continue).replace(/直走/g,dirs.straight)
+      .replace(/第一個路口/g,dirs.first).replace(/第二個路口/g,dirs.second)
+      .replace(/左手邊/g,dirs.L).replace(/右手邊/g,dirs.R)
+      .replace(/走到底/g,dirs.end)
+      .replace(/玻璃門/g,dirs.glass);
+   return q;
+ }
+ // This preserves exact landmarks/turns. Interface languages use the same route array.
+ return s.map(one);
+}
+function speechRoomDigits(t,language){
+ if(language!=='zh')return t;
+ const z={'0':'零','1':'一','2':'二','3':'三','4':'四','5':'五','6':'六','7':'七','8':'八','9':'九'};
+ return t.replace(/\b(10[5-7][0-9])\b/g,m=>m.split('').map(c=>z[c]).join(''));
+}
+
+function nav(k){let name=D[k][1],s=zr(room,k);if(l!=='zh')s=trSteps(s);nt.textContent=D[k][0]+' '+name;ns.textContent=T[l][5]+'：'+room+' → '+name;steps.innerHTML=s.map((x,i)=>`<div class="step"><div class="num">${i+1}</div><div>${x}</div></div>`).join('');let tips={pantry:'配膳室內有飲水機、垃圾分類、廚餘桶、投幣式洗衣機與烘衣機。',water:'飲水機位於配膳室；取熱水請小心燙傷。',trash:'垃圾分類與廚餘桶位於配膳室。',laundry:'投幣式洗衣機與烘衣機位於配膳室。',linen:'被服室有乾淨床單、中單、枕頭套及病人衣褲。',microwave:'微波爐在治療室相對側，旁邊是量身高體重區，也是護理站櫃檯外側的一部分。',utility:'污物室有檢體冰箱、製冰機、尿布垃圾桶、便盆椅、尿布秤、污衣袋及髒被架。換被子請將髒被折好放指定架並告知護理站，一件換一件。',exit:'玻璃門就是病房出入口；若目的地不是出口，請不要誤走出去。',station:'請在櫃檯外詢問護理人員，不要進入護理站工作區。',toilet:'如有頭暈、跌倒風險或行動不便，建議請人陪同。'};tip.textContent=l==='zh'?tips[k]:'If you need assistance, please ask nursing staff.';speech=speechRoomDigits(s.join(' ')+' '+tip.textContent,l);sp.textContent=T[l][7];bk.textContent=T[l][8];chg2.textContent=T[l][6];show('route')}
+function speakIt(){if(l==='tw'){alert('台語真人錄音版待加入；目前先顯示台語文字。');return}if(!('speechSynthesis'in window))return;speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(speech);u.lang={zh:'zh-TW',en:'en-US',id:'id-ID',vi:'vi-VN',ja:'ja-JP'}[l];u.rate=.82;speechSynthesis.speak(u)}
+</script></main></body></html>
