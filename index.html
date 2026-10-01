@@ -1,82 +1,46 @@
-<!doctype html>
-<html lang="zh-Hant">
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#f6f8fb"><title>10C 病房生活導航</title>
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>10C 病房導航 V4</title>
 <style>
-:root{--bg:#f6f8fb;--card:#fff;--ink:#17202a;--muted:#586575;--blue:#1769e0;--green:#087f5b;--red:#d93025;--line:#d8e1eb;--amber:#fff5d6}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Microsoft JhengHei",sans-serif}
-main{max-width:560px;margin:auto;padding:14px 14px 34px}.top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
-.brand{font-size:24px;font-weight:900}.where{background:#e8f2ff;color:#1455b4;border-radius:999px;padding:9px 12px;font-size:16px;font-weight:850}
-.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;margin-bottom:14px;box-shadow:0 6px 20px #0000000d}
-h1{font-size:30px;line-height:1.25;margin:0 0 8px}h2{font-size:25px;margin:0 0 8px}p{font-size:19px;line-height:1.55;margin:5px 0;color:var(--muted)}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}.choice{min-height:106px;border:2px solid #d7e4f6;border-radius:18px;background:#fff;padding:12px 8px;font-size:21px;font-weight:900;color:var(--ink)}
-.choice .ico{display:block;font-size:34px;margin-bottom:4px}.choice small{display:block;font-size:14px;color:#667085;margin-top:3px;font-weight:700}
-.choice:active,.action:active{transform:scale(.98)}.screen{display:none}.screen.active{display:block}
-.action{width:100%;border:0;border-radius:16px;padding:15px;margin-top:10px;font-size:20px;font-weight:900;background:var(--blue);color:#fff}.secondary{background:#e9eef5;color:#17202a}
-.map{position:relative;width:100%;height:455px;background:#fff;border:2px solid #aebbc8;border-radius:18px;overflow:hidden;margin-top:12px}
-.hall{position:absolute;background:#fff;border:1px solid #e4e8ed}.room,.poi,.station{position:absolute;border:1.5px solid #607d8b;background:#d7eee8;display:grid;place-items:center;text-align:center;font-weight:850;font-size:11px;padding:2px}
-.poi{background:#edf1f4;font-size:12px}.station{background:#fff0b8;border:3px solid #b77900;font-size:14px}
-.line{position:absolute;height:8px;background:var(--blue);border-radius:99px;transform-origin:left center;z-index:7;box-shadow:0 0 0 2px #fff}
-.start,.end{position:absolute;width:28px;height:28px;border-radius:50%;transform:translate(-50%,-50%);z-index:9;border:4px solid #fff}.start{background:var(--red)}.end{background:var(--green)}
-.step{display:flex;gap:11px;align-items:flex-start;background:#f8fafc;border:1px solid var(--line);border-radius:16px;padding:13px;margin-top:9px;font-size:19px;font-weight:750;line-height:1.5}
-.n{flex:0 0 40px;height:40px;border-radius:50%;background:#dceaff;color:#1455b4;display:grid;place-items:center;font-weight:900}
-.tip{background:#fff7e8;border:1px solid #efd39c;border-radius:15px;padding:12px;margin-top:12px;font-size:17px;font-weight:750;line-height:1.5}
-.tag{display:inline-block;background:#e8f6f0;color:#087f5b;border-radius:999px;padding:5px 9px;margin:3px;font-size:15px;font-weight:800}
-.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:14px;font-weight:800;margin-top:8px}.tiny{font-size:14px;color:#6b7280;margin-top:9px}
-</style></head>
-<body><main>
-<div class="top"><div class="brand">🏥 10C 病房導航</div><div id="locBadge" class="where">📍護理站</div></div>
-
-<section id="home" class="screen active">
-<div class="card"><h1>您需要什麼？</h1><p>直接點選您想做的事情，我們帶您前往。</p></div>
-<div class="grid">
-<button class="choice" onclick="nav('exit')"><span class="ico">🚪</span>我要出去<small>病人／家屬出入口</small></button>
-<button class="choice" onclick="nav('toilet')"><span class="ico">🚻</span>我要上廁所<small>公共廁所</small></button>
-<button class="choice" onclick="nav('water')"><span class="ico">🚰</span>我要裝水<small>飲水機</small></button>
-<button class="choice" onclick="nav('microwave')"><span class="ico">🍲</span>我要熱食物<small>微波爐</small></button>
-<button class="choice" onclick="nav('trash')"><span class="ico">♻️</span>我要丟垃圾<small>垃圾分類／廚餘</small></button>
-<button class="choice" onclick="nav('laundry')"><span class="ico">👕</span>我要洗衣服<small>投幣洗衣／烘衣</small></button>
-<button class="choice" onclick="nav('linen')"><span class="ico">🛏️</span>拿床單／病人服<small>被服室</small></button>
-<button class="choice" onclick="nav('station')"><span class="ico">👩‍⚕️</span>找護理站<small>護理人員服務區</small></button>
-<button class="choice" onclick="nav('utility')"><span class="ico">🧹</span>污物室<small>前往污物室</small></button>
-<button class="choice" onclick="speak('您好，這裡是十C病房生活導航。請直接點選您想做的事情。')"><span class="ico">🔊</span>唸給我聽<small>語音操作提示</small></button>
-</div>
-<div class="card" style="margin-top:14px"><h2>📍 測試起點</h2><p>目前先以「護理站」作為起點。之後可在各走廊放 QR Code，自動切換目前位置。</p></div>
-</section>
-
-<section id="routeScreen" class="screen">
-<div class="card"><h1 id="routeTitle"></h1><p id="routeSub"></p><div id="serviceTags"></div>
+*{box-sizing:border-box}body{margin:0;background:#f6f8fb;color:#17202a;font-family:-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif}main{max-width:600px;margin:auto;padding:14px}.top{display:flex;justify-content:space-between;align-items:center}.card{background:#fff;border:1px solid #d9e2ec;border-radius:20px;padding:17px;margin:12px 0;box-shadow:0 5px 18px #0001}h1{font-size:29px;margin:0 0 7px}p{font-size:18px;color:#596575}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.btn,.room{background:#fff;border:2px solid #d6e4f7;border-radius:16px;padding:12px 7px;min-height:92px;font-size:19px;font-weight:900}.room{min-height:58px}.ico{display:block;font-size:31px}.pill{border:0;border-radius:999px;background:#e8f2ff;color:#1455b4;padding:9px 12px;font-weight:800}.screen{display:none}.active{display:block}.status{background:#edf5ff;color:#1455b4;padding:10px;border-radius:13px;font-size:17px;font-weight:850}.action{width:100%;border:0;border-radius:15px;background:#1769e0;color:#fff;padding:14px;margin-top:9px;font-size:19px;font-weight:900}.secondary{background:#e9eef5;color:#17202a}
+.map{position:relative;height:470px;border:2px solid #aebbc8;border-radius:17px;background:#fff;overflow:hidden;margin-top:10px}.hall{position:absolute;background:#fff;border:1px solid #e5e7eb}.box{position:absolute;background:#d7eee8;border:1px solid #607d8b;display:grid;place-items:center;text-align:center;font-size:10px;font-weight:850}.poi{background:#edf1f4}.blocked{background:#fff0b8;border:2px dashed #9b7b1b}.line{position:absolute;height:8px;background:#1769e0;border-radius:99px;transform-origin:left center;z-index:6;box-shadow:0 0 0 2px #fff}.dot{position:absolute;width:27px;height:27px;border-radius:50%;transform:translate(-50%,-50%);z-index:8;border:4px solid white}.start{background:#d93025}.end{background:#087f5b}.step{display:flex;gap:10px;background:#f8fafc;border:1px solid #d9e2ec;border-radius:15px;padding:12px;margin-top:8px;font-size:18px;font-weight:750}.num{min-width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#dceaff;color:#1455b4}.tip{background:#fff6dd;border:1px solid #efd39c;border-radius:14px;padding:12px;margin-top:10px;font-size:16px;font-weight:700}.tiny{font-size:13px;color:#6b7280}
+</style></head><body><main><div class="top"><b style="font-size:23px">🏥 10C</b><button class="pill" onclick="show('lang')">🌐 <span id="lname">繁體中文</span></button></div>
+<section id="lang" class="screen active"><div class="card"><h1>請選擇語言</h1><p>Choose language · Pilih bahasa · Chọn ngôn ngữ · 言語を選択</p></div><div class="grid2">
+<button class="btn" onclick="setLang('zh')">🇹🇼 繁體中文</button><button class="btn" onclick="setLang('tw')">🗣️ 台語</button><button class="btn" onclick="setLang('en')">🇺🇸 English</button><button class="btn" onclick="setLang('id')">🇮🇩 Bahasa Indonesia</button><button class="btn" onclick="setLang('vi')">🇻🇳 Tiếng Việt</button><button class="btn" onclick="setLang('ja')">🇯🇵 日本語</button></div></section>
+<section id="rooms" class="screen"><div class="card"><h1 id="rtitle"></h1><p id="rhelp"></p></div><div id="roomgrid" class="grid3"></div></section>
+<section id="dest" class="screen"><div class="card"><h1 id="dtitle"></h1><p id="dhelp"></p><div id="from" class="status"></div></div><div id="destgrid" class="grid2"></div><button class="action secondary" onclick="showRooms()" id="change1"></button></section>
+<section id="route" class="screen"><div class="card"><h1 id="ntitle"></h1><p id="nsub"></p>
 <div class="map">
-<div class="hall" style="left:7%;top:17%;width:86%;height:9%"></div><div class="hall" style="left:7%;top:17%;width:10%;height:70%"></div><div class="hall" style="left:83%;top:17%;width:10%;height:70%"></div><div class="hall" style="left:7%;top:78%;width:86%;height:9%"></div>
-<div class="room" style="left:7%;top:2%;width:14%;height:15%">1056<br>1057</div><div class="poi" style="left:21%;top:2%;width:14%;height:15%">平安乙梯</div><div class="room" style="left:35%;top:2%;width:48%;height:15%">1058　1059　1060<br>1061　1062　1063<br>1064　1065</div>
-<div class="room" style="left:1%;top:26%;width:16%;height:47%">1051<br>1052<br>1053<br>1054<br>1055</div><div class="room" style="left:83%;top:26%;width:16%;height:47%">1066<br>1067<br>1068<br>1069<br>1070</div>
-<div class="poi" style="left:22%;top:29%;width:14%;height:12%">①<br>配膳室</div><div class="poi" style="left:22%;top:42%;width:14%;height:10%">④ 🚻<br>公共廁所</div>
-<div class="poi" style="left:49%;top:29%;width:17%;height:13%">③<br>被服室</div><div class="poi" style="left:49%;top:43%;width:17%;height:14%">②<br>污物室</div>
-<div class="station" style="left:22%;top:56%;width:21%;height:15%">👩‍⚕️<br>護理站</div><div class="poi" style="left:43%;top:58%;width:12%;height:9%">⑤ 🍲<br>微波爐</div>
-<div class="poi" style="left:1%;top:74%;width:16%;height:13%">🚪 平安甲梯<br>唯一出入口</div><div class="poi" style="left:83%;top:74%;width:16%;height:13%">平安丙梯</div>
-<div id="routeLayer"></div></div>
-<div class="legend"><span>🔴 起點</span><span>🟢 目的地</span><span>━ 藍線：建議路線</span></div>
-<div id="steps"></div><div class="tip" id="tip"></div>
-<button class="action" onclick="speak(currentSpeech)">🔊 唸出導航</button><button class="action secondary" onclick="show('home')">← 回首頁</button>
-<p class="tiny">測試版：路線依目前提供的平面圖製作，正式使用前請由單位逐條確認實際門口與行走動線。</p></div>
-</section>
-
+<div class="hall" style="left:7%;top:15%;width:86%;height:9%"></div><div class="hall" style="left:20%;top:15%;width:8%;height:68%"></div><div class="hall" style="left:79%;top:15%;width:8%;height:68%"></div><div class="hall" style="left:20%;top:43%;width:67%;height:8%"></div><div class="hall" style="left:20%;top:75%;width:67%;height:8%"></div><div class="hall" style="left:45%;top:15%;width:7%;height:68%"></div>
+<div class="box" style="left:7%;top:1%;width:13%;height:14%">1056<br>1057</div><div class="box poi" style="left:20%;top:1%;width:15%;height:14%">平安乙梯</div><div class="box" style="left:35%;top:1%;width:58%;height:14%">1058 1059 1060 1061<br>1062 1063 1064 1065</div><div class="box" style="left:5%;top:24%;width:15%;height:49%">1055<br>1054<br>1053<br>1052<br>1051</div><div class="box" style="left:87%;top:24%;width:12%;height:49%">1066<br>1067<br>1068<br>1069<br>1070</div>
+<div class="box poi" style="left:28%;top:25%;width:15%;height:13%">① 配膳室</div><div class="box poi" style="left:38%;top:25%;width:8%;height:9%">④ 🚻</div><div class="box blocked" style="left:28%;top:52%;width:17%;height:21%">護理站<br>不可穿越</div><div class="box poi" style="left:52%;top:51%;width:16%;height:9%">③ 被服室</div><div class="box poi" style="left:52%;top:60%;width:16%;height:9%">治療室</div><div class="box poi" style="left:52%;top:69%;width:16%;height:9%">② 污物室</div><div class="box poi" style="left:45%;top:72%;width:8%;height:7%">⑤ 🍲</div><div class="box" style="left:32%;top:83%;width:43%;height:16%">1074　1073　1072　1071</div><div class="box poi" style="left:5%;top:75%;width:15%;height:13%">🚪 甲梯<br>出入口</div><div id="layer"></div></div>
+<div id="steps"></div><div id="tip" class="tip"></div><button class="action" onclick="speakNow()" id="speak"></button><button class="action secondary" onclick="show('dest')" id="back"></button><button class="action secondary" onclick="showRooms()" id="change2"></button><p class="tiny" id="note"></p></div></section>
 <script>
-const P={
- station:{title:'前往護理站',sub:'目的地：護理站',dest:[32,63],pts:[[32,63]],steps:['您目前就在護理站附近。'],tags:['護理站'],tip:'如有不舒服或行動不便，請使用床邊呼叫鈴。'},
- exit:{title:'前往病房出入口',sub:'病人／家屬唯一出入口：平安甲梯',dest:[10,80],pts:[[32,63],[13,63],[13,80],[10,80]],steps:['從護理站往左側主要走廊前進。','沿走廊往甲梯方向走。','抵達平安甲梯；病人及家屬由此進出。'],tags:['平安甲梯','病人／家屬出入口'],tip:'請依院內規定進出病房；行動不便者請先請護理人員協助。'},
- toilet:{title:'前往公共廁所',sub:'目的地：④ 公共廁所',dest:[29,46],pts:[[32,63],[14,63],[14,46],[29,46]],steps:['從護理站往左側走廊前進。','沿走廊往上。','轉入公共廁所。'],tags:['公共廁所'],tip:'若您有跌倒風險、頭暈或走路不穩，請先按鈴請人陪同。'},
- water:{title:'前往飲水機',sub:'飲水機位於①配膳室',dest:[29,35],pts:[[32,63],[14,63],[14,35],[29,35]],steps:['從護理站往左側走廊前進。','沿走廊往上。','進入配膳室即可找到飲水機。'],tags:['配膳室','飲水機'],tip:'取用熱水時請注意燙傷。'},
- microwave:{title:'前往微波爐',sub:'⑤ 治療室門口、護理站量身高體重區旁',dest:[49,62],pts:[[32,63],[49,63],[49,62]],steps:['從護理站往量身高體重的位置前進。','微波爐位於治療室門口附近。'],tags:['微波爐','治療室門口'],tip:'加熱食物時請使用適合微波的容器。'},
- trash:{title:'前往垃圾／廚餘區',sub:'垃圾分類與廚餘桶位於①配膳室',dest:[29,35],pts:[[32,63],[14,63],[14,35],[29,35]],steps:['從護理站往左側走廊前進。','沿走廊往上。','進入配膳室後，依標示進行垃圾分類或倒廚餘。'],tags:['配膳室','垃圾分類','廚餘桶'],tip:'請依現場分類標示丟棄。'},
- laundry:{title:'前往洗衣／烘衣',sub:'投幣式洗衣機、烘衣機位於①配膳室',dest:[29,35],pts:[[32,63],[14,63],[14,35],[29,35]],steps:['從護理站往左側走廊前進。','沿走廊往上。','進入配膳室即可找到投幣式洗衣機與烘衣機。'],tags:['配膳室','投幣洗衣機','投幣烘衣機'],tip:'使用前請依現場機器說明操作並準備所需硬幣。'},
- linen:{title:'前往被服室',sub:'③ 可取得床單、中單、枕頭套及病人衣褲',dest:[57,35],pts:[[32,63],[14,63],[14,22],[57,22],[57,35]],steps:['從護理站進入主要走廊。','沿走廊往上後轉入上方走廊。','前往③被服室。'],tags:['床單','中單','枕頭套','病人衣褲'],tip:'請依病房規範取用被服；如不確定，先詢問護理人員。'},
- utility:{title:'前往污物室',sub:'目的地：② 污物室',dest:[57,50],pts:[[32,63],[14,63],[14,82],[87,82],[87,50],[57,50]],steps:['從護理站前往主要走廊。','沿走廊繞行至另一側。','前往②污物室。'],tags:['污物室'],tip:'污物室可能有醫療作業或感染管制限制，請依病房現場標示及護理人員指示使用。'}
-};
-let currentSpeech='';
-function show(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
-function nav(k){const d=P[k];routeTitle.textContent=d.title;routeSub.textContent='📍 護理站 → '+d.sub;serviceTags.innerHTML=d.tags.map(x=>`<span class="tag">${x}</span>`).join('');steps.innerHTML=d.steps.map((x,i)=>`<div class="step"><div class="n">${i+1}</div><div>${x}</div></div>`).join('');tip.textContent=d.tip;currentSpeech='從護理站，'+d.title.replace('前往','前往')+'。'+d.steps.join(' ');
-const z=document.getElementById('routeLayer');z.innerHTML='';if(d.pts.length>1)d.pts.forEach((a,i)=>{if(i<d.pts.length-1){const b=d.pts[i+1],dx=b[0]-a[0],dy=b[1]-a[1],q=document.createElement('div');q.className='line';q.style.left=a[0]+'%';q.style.top=a[1]+'%';q.style.width=Math.hypot(dx,dy)+'%';q.style.transform=`rotate(${Math.atan2(dy,dx)*180/Math.PI}deg)`;z.appendChild(q)}});const s=document.createElement('div');s.className='start';s.style.left=d.pts[0][0]+'%';s.style.top=d.pts[0][1]+'%';z.appendChild(s);const e=document.createElement('div');e.className='end';e.style.left=d.dest[0]+'%';e.style.top=d.dest[1]+'%';z.appendChild(e);show('routeScreen')}
-function speak(t){if(!('speechSynthesis' in window)){alert('此瀏覽器不支援語音朗讀');return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='zh-TW';u.rate=.82;speechSynthesis.speak(u)}
+const rooms=Array.from({length:24},(_,i)=>String(1051+i));
+const rp={1051:[24,68],1052:[24,59],1053:[24,50],1054:[24,39],1055:[24,29],1056:[10,20],1057:[18,20],1058:[38,20],1059:[44,20],1060:[50,20],1061:[56,20],1062:[62,20],1063:[68,20],1064:[75,20],1065:[83,20],1066:[83,29],1067:[83,38],1068:[83,48],1069:[83,58],1070:[83,68],1071:[70,79],1072:[61,79],1073:[52,79],1074:[42,79]};
+const pp={exit:[15,79],toilet:[43,32],pantry:[34,32],linen:[52,55],utility:[52,72],microwave:[48,76],station:[27,75]};
+const T={zh:['繁體中文','我現在在哪一間病房？','請選擇您的病房號碼。','您要去哪裡？','選擇目的地後會顯示路線與語音指引。','目前位置','📍 更改我的病房','🔊 唸出導航','← 選其他目的地'],
+tw:['台語','你這馬佇佗一間病房？','請揀你的病房號碼。','你欲去佗位？','揀目的地了後會顯示路線。','這馬所在','📍 閣揀病房','🔊 唸導航','← 揀別个所在'],
+en:['English','Which room are you in?','Select your room number.','Where would you like to go?','Select a destination to see and hear directions.','Current location','📍 Change my room','🔊 Read directions','← Choose another destination'],
+id:['Bahasa Indonesia','Anda berada di kamar berapa?','Pilih nomor kamar Anda.','Anda ingin pergi ke mana?','Pilih tujuan untuk melihat dan mendengar petunjuk.','Lokasi saat ini','📍 Ganti kamar','🔊 Bacakan petunjuk','← Pilih tujuan lain'],
+vi:['Tiếng Việt','Bạn đang ở phòng nào?','Vui lòng chọn số phòng.','Bạn muốn đi đâu?','Chọn điểm đến để xem và nghe hướng dẫn.','Vị trí hiện tại','📍 Đổi phòng','🔊 Đọc hướng dẫn','← Chọn điểm đến khác'],
+ja:['日本語','現在どの病室にいますか？','病室番号を選んでください。','どこへ行きますか？','目的地を選ぶと経路と音声案内を表示します。','現在地','📍 病室を変更','🔊 音声案内','← 別の目的地を選ぶ']};
+const D={exit:['🚪','病房出入口／甲梯','Ward exit / Elevator A','Pintu keluar / Lift A','Lối ra / Thang máy A','病棟出入口／甲エレベーター','exit'],toilet:['🚻','公共廁所','Public restroom','Toilet umum','Nhà vệ sinh công cộng','共用トイレ','toilet'],water:['🚰','飲水機','Water dispenser','Dispenser air','Máy nước uống','給水機','pantry'],microwave:['🍲','微波爐','Microwave','Microwave','Lò vi sóng','電子レンジ','microwave'],trash:['♻️','垃圾／廚餘','Trash / food waste','Sampah / sisa makanan','Rác / thức ăn thừa','ごみ／生ごみ','pantry'],laundry:['👕','洗衣／烘衣','Washer / dryer','Mesin cuci / pengering','Máy giặt / máy sấy','洗濯機／乾燥機','pantry'],linen:['🛏️','床單／病人服','Clean linen / patient clothes','Seprai / pakaian pasien','Đồ vải sạch / quần áo bệnh nhân','清潔リネン／患者衣','linen'],utility:['🧺','髒衣物／尿布／冰敷用品','Soiled linen / diapers / ice','Linen kotor / popok / es','Đồ vải bẩn / tã / đá chườm','汚れたリネン／おむつ／冷罨法用品','utility'],station:['👩‍⚕️','護理站','Nursing station','Nurse station','Quầy điều dưỡng','ナースステーション','station']};
+let lang='zh',room=null,speechText=''; const li={zh:1,tw:1,en:2,id:3,vi:4,ja:5};
+function show(x){document.querySelectorAll('.screen').forEach(e=>e.classList.remove('active'));document.getElementById(x).classList.add('active');scrollTo(0,0)}
+function setLang(x){lang=x;lname.textContent=T[x][0];renderRooms();show('rooms')}
+function renderRooms(){rtitle.textContent=T[lang][1];rhelp.textContent=T[lang][2];roomgrid.innerHTML=rooms.map(r=>`<button class="room" onclick="pick('${r}')">${r}</button>`).join('')}
+function pick(r){room=r;renderDest();show('dest')} function showRooms(){renderRooms();show('rooms')}
+function renderDest(){dtitle.textContent=T[lang][3];dhelp.textContent=T[lang][4];from.textContent=T[lang][5]+'：'+room;change1.textContent=T[lang][6];destgrid.innerHTML=Object.entries(D).map(([k,d])=>`<button class="btn" onclick="nav('${k}')"><span class="ico">${d[0]}</span>${d[li[lang]]}</button>`).join('')}
+function routePoints(a,b){let p=[a],c=[...a];if(a[1]<=24)c=[a[0],20];else if(a[0]<=28)c=[24,a[1]];else if(a[0]>=79)c=[83,a[1]];else if(a[1]>=75)c=[a[0],79];p.push(c);
+if(b[0]<=24){if(c[0]!=24)p.push([24,c[1]]);p.push([24,b[1]],b)}
+else if(b[0]>=79){if(c[0]!=83)p.push([83,c[1]]);p.push([83,b[1]],b)}
+else if(b[1]<=50){if(c[1]!=47)p.push([c[0],47]);p.push([b[0],47],b)}
+else{if(c[1]!=79)p.push([c[0],79]);p.push([b[0],79],b)}
+return p.filter((v,i,a)=>!i||v[0]!=a[i-1][0]||v[1]!=a[i-1][1])}
+function nav(k){let d=D[k],name=d[li[lang]],pts=routePoints(rp[room],pp[d[6]]);ntitle.textContent=d[0]+' '+name;nsub.textContent=T[lang][5]+'：'+room+' → '+name;
+let ss={zh:[`從 ${room} 病房走到公共走道。`,`沿藍色路線前進，請勿穿越護理站工作區。`,`抵達「${name}」。`],tw:[`對 ${room} 病房行到外口的走廊。`,`照藍色路線行，毋通穿過護理站工作區。`,`到「${name}」。`],en:[`Leave room ${room} and enter the public corridor.`,`Follow the blue route. Do not walk through the nursing-station work area.`,`Arrive at ${name}.`],id:[`Keluar dari kamar ${room} menuju koridor umum.`,`Ikuti rute biru. Jangan melewati area kerja perawat.`,`Tiba di ${name}.`],vi:[`Ra khỏi phòng ${room} và đi vào hành lang chung.`,`Đi theo đường màu xanh. Không đi xuyên qua khu vực làm việc của điều dưỡng.`,`Đến ${name}.`],ja:[`${room}号室を出て共用廊下へ進みます。`,`青い経路に沿って進んでください。ナースステーションの業務区域内は通りません。`,`「${name}」に到着します。`]}[lang];
+steps.innerHTML=ss.map((s,i)=>`<div class="step"><div class="num">${i+1}</div><div>${s}</div></div>`).join('');
+let tips={zh:{exit:'病人及家屬由甲梯側進出。',water:'飲水機位於配膳室；取熱水請小心燙傷。',microwave:'微波爐位於治療室門口、護理站量身高體重區旁。',trash:'垃圾分類與廚餘桶位於配膳室。',laundry:'投幣式洗衣機、烘衣機位於配膳室。',linen:'被服室可取得床單、中單、枕頭套及病人衣褲。',utility:'污物室有尿布垃圾桶、污衣袋、製冰機等。換被子請將髒被子折好放指定架上並告知護理站，採一件換一件。',station:'請在櫃檯外詢問護理人員，不要進入護理站工作區。'},en:{utility:'For blanket exchange, fold the used blanket, place it on the designated rack, and tell nursing staff. Exchange is one-for-one.',station:'Please speak with staff from outside the counter. Do not enter the work area.'},ja:{utility:'毛布交換時は使用済み毛布を畳んで指定棚に置き、看護スタッフへお知らせください。1枚につき1枚交換です。',station:'カウンターの外からスタッフにお声かけください。業務区域内には入らないでください。'}};tip.textContent=(tips[lang]&&tips[lang][k])||({tw:'若需要鬥相共，請共護理人員講。',id:'Jika memerlukan bantuan, silakan hubungi perawat.',vi:'Nếu cần hỗ trợ, vui lòng liên hệ điều dưỡng.',en:'Ask nursing staff if you need assistance.',ja:'必要な場合は看護スタッフにお声かけください。'}[lang]||'');
+speechText=ss.join(' ')+' '+tip.textContent;speak.textContent=T[lang][7];back.textContent=T[lang][8];change2.textContent=T[lang][6];note.textContent='Prototype / 測試版：正式使用前請由病房確認所有路線與安全資訊。';draw(pts,pp[d[6]]);show('route')}
+function draw(p,b){layer.innerHTML='';p.forEach((a,i)=>{if(i<p.length-1){let q=p[i+1],dx=q[0]-a[0],dy=q[1]-a[1],e=document.createElement('div');e.className='line';e.style.left=a[0]+'%';e.style.top=a[1]+'%';e.style.width=Math.hypot(dx,dy)+'%';e.style.transform=`rotate(${Math.atan2(dy,dx)*180/Math.PI}deg)`;layer.appendChild(e)}});let s=document.createElement('div');s.className='dot start';s.style.left=p[0][0]+'%';s.style.top=p[0][1]+'%';layer.appendChild(s);let e=document.createElement('div');e.className='dot end';e.style.left=b[0]+'%';e.style.top=b[1]+'%';layer.appendChild(e)}
+function speakNow(){if(lang==='tw'){alert('台語真人錄音版待加入；目前先使用台語文字導航。');return}if(!('speechSynthesis'in window))return; speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(speechText);u.lang={zh:'zh-TW',en:'en-US',id:'id-ID',vi:'vi-VN',ja:'ja-JP'}[lang];u.rate=.82;speechSynthesis.speak(u)}
 </script></main></body></html>
